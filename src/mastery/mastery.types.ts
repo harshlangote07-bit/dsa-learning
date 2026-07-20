@@ -31,7 +31,6 @@ export interface MasteryState {
 // --------------------
 
 export interface LearningEvidence {
-  topicId: string;
   problemId: string;
 
   verdict: Verdict;
@@ -40,6 +39,11 @@ export interface LearningEvidence {
   attemptNumber: number;
   timestamp: Date;
   hintsUsed: number;
+}
+
+export interface ProblemTopic {
+  topicId: string;
+  weight: number;
 }
 
 // --------------------

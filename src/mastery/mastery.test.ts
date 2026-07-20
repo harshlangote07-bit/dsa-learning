@@ -1,235 +1,141 @@
-import { updateMastery } from "./mastery.engine";
+import { processSubmission } from "./submission.service";
 import {
   Difficulty,
-  MasteryState,
   Verdict,
   LearningEvidence,
+  MasteryState,
+  ProblemTopic,
 } from "./mastery.types";
 
 interface TestCase {
   name: string;
-  state: MasteryState;
+  masteries: MasteryState[];
+  problemTopics: ProblemTopic[];
   evidence: LearningEvidence;
 }
 
 const tests: TestCase[] = [
   {
-    name: "Test 1 - Medium | First Attempt | No Hints",
-    state: { topicId: "arrays", mastery: 50 },
+    name: "Single Topic - Binary Search",
+    masteries: [
+      { topicId: "binary-search", mastery: 40 },
+    ],
+    problemTopics: [
+      { topicId: "binary-search", weight: 1.0 },
+    ],
     evidence: {
-      topicId: "arrays",
-      problemId: "two-sum",
-      verdict: Verdict.AC,
-      difficulty: Difficulty.MEDIUM,
-      attemptNumber: 1,
-      timestamp: new Date(),
-      hintsUsed: 0,
-    },
-  },
-
-  {
-    name: "Test 2 - Easy | First Attempt",
-    state: { topicId: "arrays", mastery: 20 },
-    evidence: {
-      topicId: "arrays",
       problemId: "binary-search",
       verdict: Verdict.AC,
       difficulty: Difficulty.EASY,
       attemptNumber: 1,
-      timestamp: new Date(),
       hintsUsed: 0,
+      timestamp: new Date(),
     },
   },
 
   {
-    name: "Test 3 - Hard | First Attempt",
-    state: { topicId: "graphs", mastery: 40 },
+    name: "Two Topics - Rotated Sorted Array",
+    masteries: [
+      { topicId: "binary-search", mastery: 55 },
+      { topicId: "arrays", mastery: 45 },
+    ],
+    problemTopics: [
+      { topicId: "binary-search", weight: 0.7 },
+      { topicId: "arrays", weight: 0.3 },
+    ],
     evidence: {
-      topicId: "graphs",
-      problemId: "dijkstra",
+      problemId: "rotated-array",
+      verdict: Verdict.AC,
+      difficulty: Difficulty.MEDIUM,
+      attemptNumber: 1,
+      hintsUsed: 0,
+      timestamp: new Date(),
+    },
+  },
+
+  {
+    name: "Three Topics - Number of Islands",
+    masteries: [
+      { topicId: "graph", mastery: 45 },
+      { topicId: "bfs", mastery: 30 },
+      { topicId: "matrix", mastery: 60 },
+    ],
+    problemTopics: [
+      { topicId: "graph", weight: 0.5 },
+      { topicId: "bfs", weight: 0.3 },
+      { topicId: "matrix", weight: 0.2 },
+    ],
+    evidence: {
+      problemId: "number-of-islands",
       verdict: Verdict.AC,
       difficulty: Difficulty.HARD,
       attemptNumber: 1,
-      timestamp: new Date(),
       hintsUsed: 0,
+      timestamp: new Date(),
     },
   },
 
   {
-    name: "Test 4 - Extreme | First Attempt",
-    state: { topicId: "dp", mastery: 30 },
+    name: "Four Topics - Word Ladder",
+    masteries: [
+      { topicId: "graph", mastery: 55 },
+      { topicId: "bfs", mastery: 50 },
+      { topicId: "strings", mastery: 42 },
+      { topicId: "hashmap", mastery: 60 },
+    ],
+    problemTopics: [
+      { topicId: "graph", weight: 0.35 },
+      { topicId: "bfs", weight: 0.30 },
+      { topicId: "strings", weight: 0.20 },
+      { topicId: "hashmap", weight: 0.15 },
+    ],
     evidence: {
-      topicId: "dp",
-      problemId: "digit-dp",
+      problemId: "word-ladder",
       verdict: Verdict.AC,
-      difficulty: Difficulty.EXTREME,
+      difficulty: Difficulty.HARD,
       attemptNumber: 1,
-      timestamp: new Date(),
       hintsUsed: 0,
+      timestamp: new Date(),
     },
   },
 
   {
-    name: "Test 5 - Hard | Second Attempt",
-    state: { topicId: "trees", mastery: 50 },
+    name: "Five Topics - Alien Dictionary",
+    masteries: [
+      { topicId: "graph", mastery: 50 },
+      { topicId: "topological-sort", mastery: 35 },
+      { topicId: "dfs", mastery: 40 },
+      { topicId: "strings", mastery: 60 },
+      { topicId: "hashmap", mastery: 55 },
+    ],
+    problemTopics: [
+      { topicId: "graph", weight: 0.30 },
+      { topicId: "topological-sort", weight: 0.30 },
+      { topicId: "dfs", weight: 0.15 },
+      { topicId: "strings", weight: 0.15 },
+      { topicId: "hashmap", weight: 0.10 },
+    ],
     evidence: {
-      topicId: "trees",
-      problemId: "lca",
+      problemId: "alien-dictionary",
       verdict: Verdict.AC,
       difficulty: Difficulty.HARD,
       attemptNumber: 2,
-      timestamp: new Date(),
-      hintsUsed: 0,
-    },
-  },
-
-  {
-    name: "Test 6 - Hard | Third Attempt",
-    state: { topicId: "trees", mastery: 50 },
-    evidence: {
-      topicId: "trees",
-      problemId: "segment-tree",
-      verdict: Verdict.AC,
-      difficulty: Difficulty.HARD,
-      attemptNumber: 3,
-      timestamp: new Date(),
-      hintsUsed: 0,
-    },
-  },
-
-  {
-    name: "Test 7 - Hard | Fourth Attempt",
-    state: { topicId: "trees", mastery: 50 },
-    evidence: {
-      topicId: "trees",
-      problemId: "heavy-light",
-      verdict: Verdict.AC,
-      difficulty: Difficulty.HARD,
-      attemptNumber: 4,
-      timestamp: new Date(),
-      hintsUsed: 0,
-    },
-  },
-
-  {
-    name: "Test 8 - One Hint",
-    state: { topicId: "arrays", mastery: 50 },
-    evidence: {
-      topicId: "arrays",
-      problemId: "prefix-sum",
-      verdict: Verdict.AC,
-      difficulty: Difficulty.MEDIUM,
-      attemptNumber: 1,
-      timestamp: new Date(),
       hintsUsed: 1,
-    },
-  },
-
-  {
-    name: "Test 9 - Two Hints",
-    state: { topicId: "arrays", mastery: 50 },
-    evidence: {
-      topicId: "arrays",
-      problemId: "difference-array",
-      verdict: Verdict.AC,
-      difficulty: Difficulty.MEDIUM,
-      attemptNumber: 1,
       timestamp: new Date(),
-      hintsUsed: 2,
-    },
-  },
-
-  {
-    name: "Test 10 - Three Hints",
-    state: { topicId: "arrays", mastery: 50 },
-    evidence: {
-      topicId: "arrays",
-      problemId: "fenwick-tree",
-      verdict: Verdict.AC,
-      difficulty: Difficulty.MEDIUM,
-      attemptNumber: 1,
-      timestamp: new Date(),
-      hintsUsed: 3,
-    },
-  },
-
-  {
-    name: "Test 11 - Wrong Answer",
-    state: { topicId: "graphs", mastery: 60 },
-    evidence: {
-      topicId: "graphs",
-      problemId: "mst",
-      verdict: Verdict.WA,
-      difficulty: Difficulty.EXTREME,
-      attemptNumber: 1,
-      timestamp: new Date(),
-      hintsUsed: 0,
-    },
-  },
-
-  {
-    name: "Test 12 - TLE",
-    state: { topicId: "graphs", mastery: 72 },
-    evidence: {
-      topicId: "graphs",
-      problemId: "floyd-warshall",
-      verdict: Verdict.TLE,
-      difficulty: Difficulty.HARD,
-      attemptNumber: 1,
-      timestamp: new Date(),
-      hintsUsed: 0,
-    },
-  },
-
-  {
-    name: "Test 13 - Near Maximum Mastery",
-    state: { topicId: "dp", mastery: 99 },
-    evidence: {
-      topicId: "dp",
-      problemId: "bitmask-dp",
-      verdict: Verdict.AC,
-      difficulty: Difficulty.EXTREME,
-      attemptNumber: 1,
-      timestamp: new Date(),
-      hintsUsed: 0,
-    },
-  },
-
-  {
-    name: "Test 14 - Already Mastered",
-    state: { topicId: "dp", mastery: 100 },
-    evidence: {
-      topicId: "dp",
-      problemId: "convex-hull-trick",
-      verdict: Verdict.AC,
-      difficulty: Difficulty.EXTREME,
-      attemptNumber: 1,
-      timestamp: new Date(),
-      hintsUsed: 0,
-    },
-  },
-
-  {
-    name: "Test 15 - Clamp to 100",
-    state: { topicId: "dp", mastery: 99.99 },
-    evidence: {
-      topicId: "dp",
-      problemId: "alien-trick",
-      verdict: Verdict.AC,
-      difficulty: Difficulty.EXTREME,
-      attemptNumber: 1,
-      timestamp: new Date(),
-      hintsUsed: 0,
     },
   },
 ];
 
-tests.forEach((test, index) => {
-  console.log(`\n==============================`);
-  console.log(`${index + 1}. ${test.name}`);
-  console.log(`==============================`);
+for (const test of tests) {
+  console.log("\n========================================");
+  console.log(test.name);
+  console.log("========================================");
 
-  const result = updateMastery(test.state, test.evidence);
+  const result = processSubmission(
+    test.masteries,
+    test.problemTopics,
+    test.evidence
+  );
 
-  console.log(result);
-});
+  console.dir(result, { depth: null });
+}
