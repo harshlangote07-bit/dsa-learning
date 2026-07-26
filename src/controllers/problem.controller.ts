@@ -1,55 +1,32 @@
 import { Request, Response } from "express";
-import { getAllProblems, getProblemById, } from "../services/problem.service";
+import { asyncHandler } from "../middleware/asyncHandler";
+import { getAllProblems, getProblemById } from "../services/problem.service";
+import { AppError } from "../utils/AppError";
 
+export const getProblems = asyncHandler(async (_req: Request, res: Response) => {
+  const problems = await getAllProblems();
 
-export async function getProblems(
-  _req: Request,
-  res: Response
-): Promise<void> {
-  try {
-    const problems = await getAllProblems();
+  res.status(200).json({
+    success: true,
+    message: "Problems fetched successfully",
+    data: problems,
+  });
+});
 
-    res.status(200).json({
-      success: true,
-      data: problems,
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch problems",
-    });
-  }
-}
-
-export async function getProblem(
-  req: Request<{ id: string }>,
-  res: Response
-): Promise<void> {
-  try {
+export const getProblem = asyncHandler(
+  async (req: Request<{ id: string }>, res: Response) => {
     const { id } = req.params;
 
     const problem = await getProblemById(id);
 
     if (!problem) {
-      res.status(404).json({
-        success: false,
-        message: "Problem not found",
-      });
-      return;
+      throw new AppError("Problem not found", 404);
     }
 
     res.status(200).json({
       success: true,
+      message: "Problem fetched successfully",
       data: problem,
     });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch problem",
-    });
   }
-}
+);

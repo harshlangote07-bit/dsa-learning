@@ -1,23 +1,17 @@
 import { Request, Response } from "express";
+import { asyncHandler } from "../middleware/asyncHandler";
 import { getUserMastery } from "../services/mastery.service";
 
-export async function getMastery(
-  req: Request<{ id: string }>,
-  res: Response
-) {
-  try {
+export const getMastery = asyncHandler(
+  async (req: Request<{ id: string }>, res: Response) => {
     const { id } = req.params;
 
     const mastery = await getUserMastery(id);
 
     res.status(200).json({
       success: true,
+      message: "User mastery fetched successfully",
       data: mastery,
     });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-    });
   }
-}
+);
