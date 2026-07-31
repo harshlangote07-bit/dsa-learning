@@ -1,6 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { Role } from "../generated/prisma/client";
 import { AppError } from "../utils/AppError";
+
+type JwtPayload = {
+  userId: string;
+  role: Role;
+};
 
 export const authenticate = (
   req: Request,
@@ -17,15 +23,14 @@ export const authenticate = (
 
   try {
     const decoded = jwt.verify(
-    token,
-    process.env.JWT_SECRET as string
-    ) as { userId: string };
+      token,
+      process.env.JWT_SECRET as string
+    ) as JwtPayload;
 
     req.user = {
-    id: decoded.userId,
+      id: decoded.userId,
+      role: decoded.role,
     };
-
-    console.log(req.user);
 
     next();
   } catch {

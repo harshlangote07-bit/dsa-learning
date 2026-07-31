@@ -13,11 +13,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   id    String @id @default(cuid())
   name  String
   email String @unique
   passwordHash String
+
+  role Role @default(USER)
 
   submissions Submission[]
   masteries   UserTopicMastery[]
@@ -93,12 +100,17 @@ model Submission {
   verdict Verdict
 
   submissionNumber Int
+
+  score Float @default(0)
+
   hintsViewed Int @default(0)
 
   submittedAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, problemId, submissionNumber])
 
   @@index([userId])
   @@index([problemId])

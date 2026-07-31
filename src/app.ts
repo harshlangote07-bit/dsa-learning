@@ -10,6 +10,10 @@ import problemRoutes from "./routes/problem.routes";
 import submissionRoutes from "./routes/submission.routes";
 import masteryRoutes from "./routes/mastery.routes";
 import authRoutes from "./routes/auth.routes";
+import userRoutes from "./routes/user.routes";
+import dashboardRoutes from "./routes/dashboard.routes";
+import recommendationRoutes from "./routes/recommendation.routes";
+
 
 const app = express();
 
@@ -26,6 +30,9 @@ app.use("/problems", problemRoutes);
 app.use("/submissions", submissionRoutes);
 app.use("/", masteryRoutes);
 app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
+app.use("/dashboard", dashboardRoutes);
+app.use("/recommendations", recommendationRoutes);
 
 app.use(errorHandler);
 

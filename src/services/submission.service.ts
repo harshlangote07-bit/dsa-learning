@@ -3,60 +3,73 @@ import { Verdict } from "../generated/prisma/client";
 import { AppError } from "../utils/AppError";
 import { updateUserMastery } from "./mastery.service";
 
-type CreateSubmissionInput = {
+export type CreateSubmissionInput = {
   userId: string;
   problemId: string;
   verdict: Verdict;
   hintsViewed?: number;
 };
 
+function calculateScore(verdict: Verdict): number {
+  switch (verdict) {
+    case Verdict.AC:
+      return 1;
+
+    // Uncomment these if they exist in your enum
+    // case Verdict.PARTIAL:
+    //   return 0.5;
+
+    default:
+      return 0;
+  }
+}
+
 export async function createSubmission(data: CreateSubmissionInput) {
-  // Check if user exists
-  const user = await prisma.user.findUnique({
-    where: { id: data.userId },
-  });
+  return prisma.$transaction(async (tx) => {
+    // Check problem exists
+    const problem = await tx.problem.findUnique({
+      where: {
+        id: data.problemId,
+      },
+    });
 
-  if (!user) {
-    throw new AppError("User not found", 404);
-  }
+    if (!problem) {
+      throw new AppError("Problem not found", 404);
+    }
 
-  // Check if problem exists
-  const problem = await prisma.problem.findUnique({
-    where: { id: data.problemId },
-  });
+    // Next submission number
+    const submissionCount = await tx.submission.count({
+      where: {
+        userId: data.userId,
+        problemId: data.problemId,
+      },
+    });
 
-  if (!problem) {
-    throw new AppError("Problem not found", 404);
-  }
+    const submissionNumber = submissionCount + 1;
 
-  // Count previous submissions
-  const submissionCount = await prisma.submission.count({
-    where: {
-      userId: data.userId,
-      problemId: data.problemId,
-    },
-  });
+    const score = calculateScore(data.verdict);
 
-  const currentSubmissionNumber = submissionCount + 1;
+    const submission = await tx.submission.create({
+      data: {
+        userId: data.userId,
+        problemId: data.problemId,
+        verdict: data.verdict,
+        submissionNumber,
+        score,
+        hintsViewed: data.hintsViewed ?? 0,
+      },
+    });
 
-  // Create submission
-  const submission = await prisma.submission.create({
-    data: {
-      userId: data.userId,
-      problemId: data.problemId,
-      verdict: data.verdict,
-      submissionNumber: currentSubmissionNumber,
-      hintsViewed: data.hintsViewed ?? 0,
-    },
-  });
-
-  // Update mastery
-  await updateUserMastery(
+    // Update mastery only for positive score
+    if (score > 0) {
+    await updateUserMastery(
+    tx,
     data.userId,
     data.problemId,
-    data.verdict,
-    currentSubmissionNumber
+    submissionNumber
   );
+    }
 
-  return submission;
+    return submission;
+  });
 }
