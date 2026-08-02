@@ -10,6 +10,7 @@ export const getCurrentUser = async (userId: string) => {
       id: true,
       name: true,
       email: true,
+      role: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -19,5 +20,49 @@ export const getCurrentUser = async (userId: string) => {
     throw new AppError("User not found", 404);
   }
 
-  return user;
+  const [
+    problemsSolved,
+    totalSubmissions,
+    acceptedSubmissions,
+  ] = await Promise.all([
+    prisma.submission.groupBy({
+      by: ["problemId"],
+      where: {
+        userId,
+        verdict: "AC",
+      },
+    }),
+
+    prisma.submission.count({
+      where: {
+        userId,
+      },
+    }),
+
+    prisma.submission.count({
+      where: {
+        userId,
+        verdict: "AC",
+      },
+    }),
+  ]);
+
+  return {
+    ...user,
+
+    stats: {
+      problemsSolved: problemsSolved.length,
+      totalSubmissions,
+      acceptedSubmissions,
+      acceptanceRate:
+        totalSubmissions === 0
+          ? 0
+          : Number(
+              (
+                (acceptedSubmissions / totalSubmissions) *
+                100
+              ).toFixed(1)
+            ),
+    },
+  };
 };
