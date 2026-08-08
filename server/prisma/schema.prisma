@@ -54,9 +54,32 @@ model Problem {
 
   topics      ProblemTopic[]
   submissions Submission[]
+  testCases   TestCase[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model TestCase {
+  id String @id @default(cuid())
+
+  problemId String
+
+  input String
+
+  expectedOutput String
+
+  isHidden Boolean @default(false)
+
+  order Int
+
+  createdAt DateTime @default(now())
+
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@index([problemId])
+
+  @@unique([problemId, order])
 }
 
 model ProblemTopic {
@@ -92,7 +115,14 @@ model UserTopicMastery {
 }
 
 model Submission {
+
   id String @id @default(cuid())
+
+  language Language    
+  
+  code String
+
+  executionTime Int @default(0)
 
   userId String
   problemId String
@@ -131,4 +161,10 @@ enum Verdict {
   MLE
   RE
   CE
+}
+
+enum Language {
+  CPP
+  JAVA
+  PYTHON
 }
