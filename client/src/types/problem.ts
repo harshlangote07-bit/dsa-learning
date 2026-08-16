@@ -25,3 +25,21 @@ export interface ProblemsResponse {
   message: string;
   data: Problem[];
 }
+
+
+export interface ProblemProgress {
+  attempted: boolean;
+  solved: boolean;
+  totalSubmissions: number;
+  acceptedSubmissions: number;
+  latestVerdict:
+    | "AC"
+    | "WA"
+    | "TLE"
+    | "MLE"
+    | "RE"
+    | "CE"
+    | null;
+  latestSubmissionNumber: number | null;
+  lastSubmittedAt: string | null;
+}

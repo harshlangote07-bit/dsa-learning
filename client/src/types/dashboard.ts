@@ -1,3 +1,5 @@
+import type { Recommendation } from "./recommendation";
+
 export interface DashboardUser {
   id: string;
   name: string;
@@ -13,10 +15,7 @@ export interface DashboardStats {
 }
 
 export interface Mastery {
-  userId: string;
-  topicId: string;
   mastery: number;
-
   topic: {
     id: string;
     name: string;
@@ -27,6 +26,7 @@ export interface RecentSubmission {
   id: string;
   verdict: string;
   submissionNumber: number;
+  hintsViewed: number;
   submittedAt: string;
 
   problem: {
@@ -41,11 +41,9 @@ export interface DashboardResponse {
 
   data: {
     user: DashboardUser;
-
     stats: DashboardStats;
-
     mastery: Mastery[];
-
     recentSubmissions: RecentSubmission[];
+    recommendations: Recommendation[];
   };
 }

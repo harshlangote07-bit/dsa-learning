@@ -4,6 +4,7 @@ import { Role } from "../generated/prisma/client";
 import * as problemController from "../controllers/problem.controller";
 import * as testcaseController from "../controllers/testcase.controller";
 import * as judgeController from "../controllers/judge.controller";
+import * as hintController from "../controllers/hint.controller";
 
 import { authenticate } from "../middleware/auth.middleware";
 import { authorize } from "../middleware/authorize.middleware";
@@ -15,6 +16,20 @@ const router = Router();
 // ===========================
 
 router.get("/", problemController.getProblems);
+
+// All problems + current user's progress
+router.get(
+  "/progress",
+  authenticate,
+  problemController.getAllProblemProgress
+);
+
+// Single problem + current user's progress
+router.get(
+  "/:id/progress",
+  authenticate,
+  problemController.getProblemProgress
+);
 
 router.get("/:id", problemController.getProblem);
 
@@ -77,12 +92,51 @@ router.delete(
   testcaseController.deleteTestCase
 );
 
-router.get("/:id", problemController.getProblem);
-
 router.post(
   "/:problemId/judge",
   authenticate,
   judgeController.judgeCode
+);
+
+// ===========================
+// Hint APIs
+// ===========================
+
+// USER + ADMIN -> get hints
+router.get(
+  "/:problemId/hints",
+  authenticate,
+  hintController.getProblemHints
+);
+
+// ADMIN only -> create hint
+router.post(
+  "/:problemId/hints",
+  authenticate,
+  authorize(Role.ADMIN),
+  hintController.createHint
+);
+
+// ADMIN only -> update hint
+router.put(
+  "/:problemId/hints/:hintId",
+  authenticate,
+  authorize(Role.ADMIN),
+  hintController.updateHint
+);
+
+// ADMIN only -> delete hint
+router.delete(
+  "/:problemId/hints/:hintId",
+  authenticate,
+  authorize(Role.ADMIN),
+  hintController.deleteHint
+);
+
+router.post(
+  "/:problemId/hints/:hintId/view",
+  authenticate,
+  hintController.viewHint
 );
 
 export default router;

@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router-dom";
+
 interface RecentSubmissionCardProps {
+  id: string;
   title: string;
   verdict: string;
   difficulty: string;
@@ -6,11 +9,14 @@ interface RecentSubmissionCardProps {
 }
 
 export default function RecentSubmissionCard({
+  id,
   title,
   verdict,
   difficulty,
   submissionNumber,
 }: RecentSubmissionCardProps) {
+  const navigate = useNavigate();
+
   const verdictColor =
     verdict === "AC"
       ? "bg-green-500"
@@ -24,7 +30,13 @@ export default function RecentSubmissionCard({
   }[difficulty] ?? "text-slate-300";
 
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5  transition hover:border-blue-500 shadow-md">
+    <button
+      type="button"
+      onClick={() =>
+        navigate(`/submissions/${id}`)
+      }
+      className="w-full rounded-2xl border border-slate-800 bg-slate-900 p-5 text-left shadow-md transition hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/10"
+    >
       <div className="flex items-center justify-between">
 
         <div>
@@ -45,13 +57,15 @@ export default function RecentSubmissionCard({
             {verdict}
           </span>
 
-          <p className={`mt-2 text-sm font-medium ${difficultyColor}`}>
+          <p
+            className={`mt-2 text-sm font-medium ${difficultyColor}`}
+          >
             {difficulty}
           </p>
 
         </div>
 
       </div>
-    </div>
+    </button>
   );
 }

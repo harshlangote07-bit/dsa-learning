@@ -1,6 +1,7 @@
 import prisma from "../db/prisma";
 import { Verdict } from "../generated/prisma/client";
 import { AppError } from "../utils/AppError";
+import { getRecommendations } from "./recommendation.service";
 
 
 async function getUserInfo(userId: string) {
@@ -132,11 +133,13 @@ export async function getDashboard(userId: string) {
     stats,
     mastery,
     recentSubmissions,
+    recommendations,
   ] = await Promise.all([
     getUserInfo(userId),
     getDashboardStats(userId),
     getTopicMastery(userId),
     getRecentSubmissions(userId),
+    getRecommendations(userId),
   ]);
 
   return {
@@ -144,5 +147,6 @@ export async function getDashboard(userId: string) {
     stats,
     mastery,
     recentSubmissions,
+    recommendations,
   };
 }

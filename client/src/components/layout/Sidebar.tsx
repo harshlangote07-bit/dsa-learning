@@ -4,6 +4,7 @@ import {
   Sparkles,
   User,
   LogOut,
+  History,
 } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
@@ -43,6 +44,14 @@ export default function Sidebar() {
         >
           <BookOpen size={20} />
           Problems
+        </NavLink>
+
+        <NavLink
+          to="/submissions"
+          className={linkClass}
+        >
+          <History size={20} />
+          Submissions
         </NavLink>
 
         <NavLink

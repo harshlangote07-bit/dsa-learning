@@ -6,6 +6,10 @@ import ProblemsPage from "../pages/ProblemsPage";
 import ProblemDetailsPage from "../pages/ProblemDetailsPage";
 import RecommendationPage from "../pages/RecommendationPage";
 import ProfilePage from "../pages/ProfilePage";
+import SubmissionsPage from "../pages/SubmissionsPage";
+import SubmissionDetailsPage from "../pages/SubmissionDetailsPage";
+import AdminDashboardPage from "../pages/AdminDashboardPage";
+import AdminRoute from "./AdminRoute";
 
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -30,6 +34,16 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         >
+          
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminDashboardPage />
+              </AdminRoute>
+            }
+          />
+
           <Route
             path="/dashboard"
             element={<DashboardPage />}
@@ -46,6 +60,16 @@ export default function AppRoutes() {
           />
 
           <Route
+            path="/submissions"
+            element={<SubmissionsPage />}
+          />
+
+          <Route
+            path="/submissions/:id"
+            element={<SubmissionDetailsPage />}
+          />
+
+          <Route
             path="/recommendations"
             element={<RecommendationPage />}
           />
@@ -54,7 +78,6 @@ export default function AppRoutes() {
             path="/profile"
             element={<ProfilePage />}
           />
-
         </Route>
 
       </Routes>

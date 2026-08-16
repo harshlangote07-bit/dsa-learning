@@ -73,3 +73,36 @@ export const deleteProblem = asyncHandler(
     });
   }
 );
+
+export const getProblemProgress = asyncHandler(
+  async (
+    req: Request<ProblemParams>,
+    res: Response
+  ) => {
+    const progress =
+      await problemService.getProblemProgress(
+        req.params.id,
+        req.user.id
+      );
+
+    res.status(200).json({
+      success: true,
+      data: progress,
+    });
+  }
+);
+
+export const getAllProblemProgress =
+  asyncHandler(
+    async (req: Request, res: Response) => {
+      const progress =
+        await problemService.getAllProblemProgress(
+          req.user.id
+        );
+
+      res.status(200).json({
+        success: true,
+        data: progress,
+      });
+    }
+  );

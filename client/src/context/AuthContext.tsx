@@ -7,6 +7,7 @@ import {
 } from "react";
 
 import type { User } from "../types/auth";
+import { getMe } from "../services/user.api";
 
 interface AuthContextType {
   user: User | null;
@@ -36,16 +37,41 @@ export function AuthProvider({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
+  const restoreSession = async () => {
+    const storedToken =
+      localStorage.getItem("token");
 
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
+    if (!storedToken) {
+      setIsLoading(false);
+      return;
     }
 
-    setIsLoading(false);
-  }, []);
+    setToken(storedToken);
+
+    try {
+      const response = await getMe();
+
+      const currentUser = response.data;
+
+      setUser(currentUser);
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(currentUser)
+      );
+    } catch {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+
+      setToken(null);
+      setUser(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  restoreSession();
+}, []);
 
   function login(token: string, user: User) {
     localStorage.setItem("token", token);

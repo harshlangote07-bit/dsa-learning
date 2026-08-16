@@ -153,3 +153,142 @@ export async function getProblemById(id: string) {
 
   
 }
+
+export async function getProblemProgress(
+  problemId: string,
+  userId: string
+) {
+  // Make sure problem exists
+  await getProblemById(problemId);
+
+  const [
+    totalSubmissions,
+    acceptedSubmissions,
+    latestSubmission,
+  ] = await prisma.$transaction([
+    prisma.submission.count({
+      where: {
+        problemId,
+        userId,
+      },
+    }),
+
+    prisma.submission.count({
+      where: {
+        problemId,
+        userId,
+        verdict: "AC",
+      },
+    }),
+
+    prisma.submission.findFirst({
+      where: {
+        problemId,
+        userId,
+      },
+
+      orderBy: {
+        submittedAt: "desc",
+      },
+
+      select: {
+        verdict: true,
+        submissionNumber: true,
+        hintsViewed: true,
+        submittedAt: true,
+      },
+    }),
+  ]);
+
+  return {
+    attempted: totalSubmissions > 0,
+
+    solved: acceptedSubmissions > 0,
+
+    totalSubmissions,
+
+    acceptedSubmissions,
+
+    latestVerdict:
+      latestSubmission?.verdict ?? null,
+
+    latestSubmissionNumber:
+      latestSubmission?.submissionNumber ?? null,
+
+    latestHintsViewed:
+      latestSubmission?.hintsViewed ?? 0,
+
+    lastSubmittedAt:
+      latestSubmission?.submittedAt ?? null,
+  };
+}
+
+export async function getAllProblemProgress(
+  userId: string
+) {
+  const problems = await prisma.problem.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      difficulty: true,
+
+      submissions: {
+        where: {
+          userId,
+        },
+
+        orderBy: {
+          submittedAt: "desc",
+        },
+
+        select: {
+          verdict: true,
+          submissionNumber: true,
+          submittedAt: true,
+        },
+      },
+    },
+  });
+
+  return problems.map((problem) => {
+    const submissions = problem.submissions;
+
+    const acceptedSubmissions =
+      submissions.filter(
+        (submission) =>
+          submission.verdict === "AC"
+      ).length;
+
+    const latestSubmission =
+      submissions[0] ?? null;
+
+    return {
+      id: problem.id,
+      title: problem.title,
+      slug: problem.slug,
+      difficulty: problem.difficulty,
+
+      attempted: submissions.length > 0,
+
+      solved: acceptedSubmissions > 0,
+
+      totalSubmissions: submissions.length,
+
+      acceptedSubmissions,
+
+      latestVerdict:
+        latestSubmission?.verdict ?? null,
+
+      latestSubmissionNumber:
+        latestSubmission?.submissionNumber ?? null,
+
+      lastSubmittedAt:
+        latestSubmission?.submittedAt ?? null,
+    };
+  });
+}
