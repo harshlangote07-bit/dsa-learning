@@ -11,6 +11,10 @@ import {
 
 import CreateProblemForm from "../features/admin/CreateProblemForm";
 
+import TestCaseManager from "../features/admin/TestCaseManager";
+
+import HintManager from "../features/admin/HintManager";
+
 import { getProblems } from "../services/problem.api";
 
 import { deleteProblem } from "../services/admin.api";
@@ -32,6 +36,13 @@ export default function AdminDashboardPage() {
 
   const [editingProblem, setEditingProblem] =
     useState<Problem | null>(null);
+
+  const [managingTestCases, setManagingTestCases] =
+   useState<Problem | null>(null);
+
+   const [managingHints, setManagingHints] =
+  useState<Problem | null>(null);
+
 
   async function fetchProblems() {
     try {
@@ -309,6 +320,24 @@ export default function AdminDashboardPage() {
                     Edit
                  </button>
 
+                 <button
+                    onClick={() =>
+                      setManagingTestCases(problem)
+                    }
+                    className="inline-flex items-center gap-2 rounded-lg border border-purple-500/20 bg-purple-500/10 px-3 py-2 text-sm font-semibold text-purple-400 transition hover:bg-purple-500/20"
+                  >
+                    Manage Tests
+                </button>
+
+                <button
+                  onClick={() =>
+                    setManagingHints(problem)
+                  }
+                  className="inline-flex items-center gap-2 rounded-lg border border-cyan-500/20 bg-cyan-500/10 px-3 py-2 text-sm font-semibold text-cyan-400 transition hover:bg-cyan-500/20"
+                >
+                  Manage Hints
+                </button>
+
                   <button
                     disabled={
                       deletingId === problem.id
@@ -363,6 +392,45 @@ export default function AdminDashboardPage() {
             await fetchProblems();
             }}
         />
+        )}
+
+
+        {managingTestCases && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+            <div className="max-h-[90vh] w-full max-w-6xl overflow-y-auto">
+              <TestCaseManager
+                problemId={managingTestCases.id}
+              />
+
+              <button
+                onClick={() =>
+                  setManagingTestCases(null)
+                }
+                className="mt-3 w-full rounded-xl border border-slate-700 bg-slate-900 py-3 font-semibold text-slate-300 transition hover:bg-slate-800 hover:text-white"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+
+        {managingHints && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+            <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto">
+              <HintManager
+                problemId={managingHints.id}
+              />
+
+              <button
+                onClick={() =>
+                  setManagingHints(null)
+                }
+                className="mt-3 w-full rounded-xl border border-slate-700 bg-slate-900 py-3 font-semibold text-slate-300 transition hover:bg-slate-800 hover:text-white"
+              >
+                Close
+              </button>
+            </div>
+          </div>
         )}
 
     </div>
