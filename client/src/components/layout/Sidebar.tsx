@@ -5,6 +5,7 @@ import {
   User,
   LogOut,
   History,
+  ShieldCheck,
 } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
@@ -62,6 +63,16 @@ export default function Sidebar() {
           <User size={18} className="shrink-0" />
           <span>Profile</span>
         </NavLink>
+
+        {user?.role === "ADMIN" && (
+          <>
+            <div className="my-2 hidden border-t border-slate-800/80 lg:block" />
+            <NavLink to="/admin" className={linkClass}>
+              <ShieldCheck size={18} className="shrink-0" />
+              <span>Admin Dashboard</span>
+            </NavLink>
+          </>
+        )}
       </nav>
 
       <div className="mt-4 hidden border-t border-slate-800/80 pt-4 lg:block">
@@ -73,7 +84,9 @@ export default function Sidebar() {
             <p className="truncate text-sm font-medium text-slate-200">
               {user?.name ?? "User"}
             </p>
-            <p className="text-xs text-slate-500">Account</p>
+            <p className="text-xs text-slate-500">
+              {user?.role === "ADMIN" ? "Administrator" : "Account"}
+            </p>
           </div>
         </div>
 
