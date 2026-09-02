@@ -2,7 +2,7 @@
 
 :root {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color-scheme: dark;
+  color-scheme: light;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
@@ -18,14 +18,14 @@ body,
 }
 
 html {
-  background: #020617;
+  background: #88BDBC;
 }
 
 body {
   margin: 0;
   min-width: 320px;
-  background: #020617;
-  color: #e2e8f0;
+  background: #88BDBC;
+  color: #112D32;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -48,13 +48,13 @@ a:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid #60a5fa;
+  outline: 2px solid #254E58;
   outline-offset: 2px;
 }
 
 ::selection {
-  background: rgb(37 99 235 / 0.35);
-  color: #f8fafc;
+  background: #254E58;
+  color: #88BDBC;
 }
 
 ::-webkit-scrollbar {
@@ -63,14 +63,50 @@ select:focus-visible {
 }
 
 ::-webkit-scrollbar-track {
-  background: #020617;
+  background: #88BDBC;
 }
 
 ::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: #334155;
+  background: #6E6658;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #4F4A41;
+}
+
+/* Reference palette: #88BDBC, #254E58, #112D32, #4F4A41, #6E6658 */
+@layer utilities {
+  .bg-slate-950 { background-color: #88BDBC !important; }
+  .bg-slate-900 { background-color: #254E58 !important; }
+  .bg-slate-800 { background-color: #112D32 !important; }
+  .bg-slate-700 { background-color: #4F4A41 !important; }
+
+  .bg-slate-950\/50 { background-color: rgb(136 189 188 / 0.5) !important; }
+  .bg-slate-950\/70 { background-color: rgb(136 189 188 / 0.7) !important; }
+  .bg-slate-900\/80 { background-color: rgb(37 78 88 / 0.8) !important; }
+
+  .text-slate-100,
+  .text-slate-200,
+  .text-slate-300 { color: #F3F0E8 !important; }
+  .text-slate-400 { color: #88BDBC !important; }
+  .text-slate-500 { color: #6E6658 !important; }
+  .text-slate-600 { color: #4F4A41 !important; }
+  .text-slate-700 { color: #112D32 !important; }
+
+  .border-slate-800 { border-color: #112D32 !important; }
+  .border-slate-700 { border-color: #4F4A41 !important; }
+
+  .bg-blue-600 { background-color: #254E58 !important; }
+  .bg-blue-600\/15 { background-color: rgb(37 78 88 / 0.15) !important; }
+  .text-blue-400 { color: #254E58 !important; }
+  .text-blue-300 { color: #254E58 !important; }
+  .border-blue-500 { border-color: #254E58 !important; }
+  .ring-blue-500\/20 { --tw-ring-color: rgb(37 78 88 / 0.2) !important; }
+  .ring-blue-500\/25 { --tw-ring-color: rgb(37 78 88 / 0.25) !important; }
+  .shadow-blue-950\/40 { --tw-shadow-color: rgb(17 45 50 / 0.4) !important; }
+
+  .text-red-400,
+  .text-red-500 { color: #4F4A41 !important; }
+  .bg-red-500\/10 { background-color: rgb(79 74 65 / 0.1) !important; }
 }
