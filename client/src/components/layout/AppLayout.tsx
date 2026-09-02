@@ -5,20 +5,18 @@ import Navbar from "./Navbar";
 
 export default function AppLayout() {
   return (
-    <div className="flex h-screen bg-slate-950">
-
+    <div className="min-h-screen bg-slate-950 text-slate-100 lg:flex">
       <Sidebar />
 
-      <div className="flex flex-1 flex-col">
-
+      <div className="flex min-h-screen min-w-0 flex-1 flex-col">
         <Navbar />
 
-        <main className="flex-1 overflow-y-auto bg-slate-950 p-8">
-          <Outlet />
+        <main className="flex-1 overflow-y-auto">
+          <div className="mx-auto w-full max-w-[1600px] p-4 sm:p-6 lg:p-8">
+            <Outlet />
+          </div>
         </main>
-
       </div>
-
     </div>
   );
 }
